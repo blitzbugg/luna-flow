@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./assets/images/banner.png" width="100%" alt="LunaFlow Banner" />
+  <img src="./assets/images/banner.jpeg" width="500" alt="LunaFlow Banner" />
 
   # 🌸 LunaFlow
   ### *Harmony in Every Cycle*
