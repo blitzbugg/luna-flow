@@ -1,98 +1,154 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import React, { useMemo } from 'react';
+import { View, StyleSheet, ScrollView, Text } from 'react-native';
+import { colors } from '@/theme/colors';
+import { spacing } from '@/theme/spacing';
+import { typography } from '@/theme/typography';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useCycleStore } from '@/store/cycleStore';
+import { useLogStore } from '@/store/logStore';
+import { useProfileStore } from '@/store/profileStore';
+import OnboardingScreen from '@/app/onboarding';
+import { StatusCard } from '@/components/screens/home/StatusCard';
+import { CycleRing } from '@/components/screens/home/CycleRing';
+import { ComingUpCard } from '@/components/screens/home/ComingUpCard';
+import { QuickLog } from '@/components/screens/home/QuickLog';
+import { getCycleDay, getPhase, getNextPeriod } from '@/utils/cycleCalc';
+import dayjs from 'dayjs';
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const { cycle } = useCycleStore();
+  const { logs } = useLogStore();
+  const { name } = useProfileStore();
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  // If onboarding not completed, show onboarding screen first
+  if (!name) {
+    return <OnboardingScreen />;
+  }
+
+  const today = dayjs().format('YYYY-MM-DD');
+  const hasLogToday = !!logs[today];
+
+  const cycleData = useMemo(() => {
+    if (!cycle.lastPeriodDate) return null;
+
+    const cycleDay = getCycleDay(today, cycle.lastPeriodDate, cycle.cycleLength);
+    const phase = getPhase(cycleDay, cycle.cycleLength, cycle.periodLength);
+    const daysUntilNext = getNextPeriod(cycleDay, cycle.cycleLength);
+    
+    // Predictions
+    const ovulationDay = Math.floor(cycle.cycleLength / 2);
+    const currentCycleStart = dayjs(today).subtract(cycleDay - 1, 'day');
+    const nextPeriodDate = currentCycleStart.add(cycle.cycleLength, 'day').format('YYYY-MM-DD');
+    const ovulationDate = currentCycleStart.add(ovulationDay - 1, 'day').format('YYYY-MM-DD');
+
+    return {
+      cycleDay,
+      phase,
+      daysUntilNext,
+      nextPeriodDate,
+      ovulationDate
+    };
+  }, [cycle, today]);
+
+  if (!cycle.lastPeriodDate) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.emptyState}>
+          <Text style={styles.emptyTitle}>Welcome to LunaFlow</Text>
+          <Text style={styles.emptyText}>
+            To start tracking your cycle, please set your last period date in settings.
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.header}>
+          <Text style={styles.title}>LunaFlow</Text>
+          <Text style={styles.subtitle}>
+            {dayjs().format('dddd, MMMM D')}
+          </Text>
+          {/* Greet the user */}
+          <Text style={styles.greeting}>Hi, {name}!</Text>
+        </View>
+
+        {cycleData && (
+          <>
+            <StatusCard 
+              phase={cycleData.phase} 
+              daysUntilNext={cycleData.daysUntilNext} 
+            />
+            
+            <CycleRing 
+              cycleDay={cycleData.cycleDay} 
+              totalDays={cycle.cycleLength} 
+              phase={cycleData.phase} 
+            />
+            
+            <ComingUpCard 
+              nextPeriodDate={cycleData.nextPeriodDate} 
+              ovulationDate={cycleData.ovulationDate} 
+            />
+            
+            <QuickLog hasLogToday={hasLogToday} />
+          </>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: {
+    flex: 1,
+    backgroundColor: colors.bg,
+  },
+  scrollContent: {
+    padding: spacing.md,
+    paddingBottom: spacing.xxl,
+  },
+  header: {
+    marginBottom: spacing.lg,
+  },
+  title: {
+    fontSize: typography.fontSize.xxxl,
+    fontFamily: 'Sora-Bold',
+    color: colors.moon,
+  },
+  subtitle: {
+    fontSize: typography.fontSize.md,
+    color: colors.muted,
+    marginTop: spacing.xs,
+  },
+  greeting: {
+    fontSize: 16,
+    color: colors.moon,
+    fontFamily: 'Sora',
+    marginTop: spacing.sm,
+  },
+  emptyState: {
+    flex: 1,
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'center',
+    padding: spacing.xl,
+    gap: spacing.md,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  emptyTitle: {
+    fontSize: 24,
+    color: colors.moon,
+    fontFamily: 'Sora-Bold',
+    textAlign: 'center',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  emptyText: {
+    fontSize: 16,
+    color: colors.muted,
+    textAlign: 'center',
+    lineHeight: 24,
   },
 });
