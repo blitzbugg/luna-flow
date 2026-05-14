@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LunaFlow App — Developer Brief (SDK 54 | Modern Expo Router)</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A0B0F;
+    --surface: #111318;
+    --card: #161820;
+    --lift: #1C1F2C;
+    --border: #252840;
+    --primary: #E8607A;
+    --primary2: #F090A0;
+    --primary3: #F8C0C8;
+    --accent: #7090F8;
+    --accent2: #A0B8FF;
+    --green: #40C870;
+    --green-lt: #162418;
+    --yellow: #F8C840;
+    --yellow-lt: #1E1A08;
+    --red: #F84848;
+    --moon: #E8DCC8;
+    --cream: #C8C0B0;
+    --muted: #606880;
+    --dim: #404560;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--moon);
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  /* ── COVER ── */
+  .cover {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cover-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .cover-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 72px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .cover-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--primary);
+    letter-spacing: 2px;
+    margin-bottom: 32px;
+    opacity: 0.8;
+  }
+
+  .cover h1 {
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 800;
+    line-height: 0.95;
+    color: white;
+    margin-bottom: 24px;
+  }
+
+  .cover h1 .app { color: var(--primary2); }
+  .cover h1 .sub {
+    display: block;
+    font-size: 0.38em;
+    font-weight: 300;
+    color: var(--muted);
+    letter-spacing: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 12px;
+  }
+
+  .cover-desc {
+    font-size: 15px;
+    color: var(--cream);
+    max-width: 560px;
+    line-height: 1.8;
+    font-weight: 300;
+    margin-bottom: 48px;
+    opacity: 0.7;
+  }
+
+  .deadline-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(248,200,64,0.08);
+    border: 1px solid rgba(248,200,64,0.25);
+    border-radius: 6px;
+    padding: 16px 24px;
+    margin-bottom: 48px;
+  }
+
+  .deadline-icon { font-size: 24px; }
+
+  .deadline-text .dl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--yellow);
+  }
+
+  .deadline-text .ds {
+    font-size: 12px;
+    color: var(--cream);
+    opacity: 0.6;
+    margin-top: 2px;
+  }
+
+  .cover-chips {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+
+  .chip.rn { background: rgba(112,144,248,0.08); border-color: rgba(112,144,248,0.3); color: var(--accent2); }
+  .chip.ts { background: rgba(64,200,112,0.08); border-color: rgba(64,200,112,0.3); color: var(--green); }
+  .chip.ex { background: rgba(232,96,122,0.08); border-color: rgba(232,96,122,0.3); color: var(--primary2); }
+  .chip.new { background: rgba(248,144,160,0.08); border-color: rgba(248,144,160,0.3); color: var(--primary3); }
+
+  .cover-bar {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    position: relative;
+    z-index: 2;
+  }
+
+  .cb-item {
+    padding: 20px 28px;
+    border-right: 1px solid var(--border);
+  }
+
+  .cb-item:last-child { border-right: none; }
+
+  .cb-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .cb-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+  }
+
+  /* ── DOC ── */
+  .doc {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 80px 60px 120px;
+  }
+
+  /* ── SEC ── */
+  .sec { margin: 80px 0 28px; }
+
+  .sec-mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .sec-mono::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .sec h2 {
+    font-size: 36px;
+    font-weight: 800;
+    color: white;
+    line-height: 1.1;
+  }
+
+  .sec h2 em {
+    color: var(--primary2);
+    font-style: normal;
+  }
+
+  .sec > p {
+    font-size: 15px;
+    color: var(--cream);
+    line-height: 1.8;
+    margin-top: 16px;
+    font-weight: 300;
+  }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    margin: 28px 0;
+    line-height: 1.6;
+  }
+
+  .cb-lang {
+    background: var(--lift);
+    color: var(--muted);
+    padding: 8px 16px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-block > div:not(.cb-lang) {
+    padding: 16px;
+    overflow-x: auto;
+    color: var(--cream);
+  }
+
+  .c-green { color: var(--green); }
+  .c-blue { color: var(--accent); }
+  .c-yellow { color: var(--yellow); }
+  .c-pink { color: var(--primary); }
+  .c-muted { color: var(--muted); }
+
+  /* ── BOXES ── */
+  .warn-box, .green-box, .blue-box {
+    border-radius: 8px;
+    padding: 20px;
+    margin: 24px 0;
+    border-left: 4px solid;
+  }
+
+  .warn-box {
+    background: rgba(248,200,64,0.08);
+    border-left-color: var(--yellow);
+  }
+
+  .green-box {
+    background: rgba(64,200,112,0.08);
+    border-left-color: var(--green);
+  }
+
+  .blue-box {
+    background: rgba(112,144,248,0.08);
+    border-left-color: var(--accent);
+  }
+
+  .warn-box h4, .green-box h4, .blue-box h4 {
+    color: white;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .warn-box ul, .green-box ul, .blue-box ul {
+    margin: 12px 0 0 20px;
+    color: var(--cream);
+  }
+
+  .warn-box li, .green-box li, .blue-box li {
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+
+  /* ── FOLDER TREE ── */
+  .tree {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--cream);
+    line-height: 1.8;
+    overflow-x: auto;
+    margin: 24px 0;
+  }
+
+  .tree-file { margin-left: 16px; }
+  .tree-dir { color: var(--accent); font-weight: 600; margin-left: 0; margin-bottom: 4px; }
+  .tree-comment { color: var(--muted); margin-top: 8px; font-style: italic; }
+
+  /* ── TABLE ── */
+  .api-table-wrap {
+    overflow-x: auto;
+    margin: 24px 0;
+  }
+
+  .api-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .api-table th {
+    background: var(--lift);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    text-align: left;
+    color: white;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  .api-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--cream);
+    font-size: 13px;
+  }
+
+  .api-table tr:last-child td { border-bottom: none; }
+
+  /* ── TIMELINE ── */
+  .timeline {
+    margin: 28px 0;
+  }
+
+  .tl-row {
+    display: grid;
+    grid-template-columns: 120px 80px 1fr;
+    border-bottom: 1px solid var(--border);
+    min-height: 60px;
+    align-items: stretch;
+  }
+
+  .tl-row.header {
+    background: var(--lift);
+  }
+
+  .tl-row.milestone {
+    background: rgba(232,96,122,0.08);
+  }
+
+  .tl-cell {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    border-right: 1px solid var(--border);
+  }
+
+  .tl-cell:last-child { border-right: none; }
+
+  .tl-row.header .tl-cell {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  .tl-date {
+    font-weight: 600;
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .tl-who {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+  .tl-task {
+    color: var(--cream);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* ── DIV ── */
+  hr.div {
+    border: none;
+    height: 1px;
+    background: var(--border);
+    margin: 60px 0;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  footer div { margin: 4px 0; }
+</style>
+</head>
+<body>
+
+<div class="doc">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-main">
+      <div class="cover-tag">🌙 TECHNICAL BRIEF</div>
+      <h1>Luna<span class="app">Flow</span><span class="sub">SDK 54 · MODERN EXPO ROUTER</span></h1>
+      <p class="cover-desc">Open-source period tracker. Private. No login. No ads. Built with Expo, TypeScript, Zustand. Ship MVP to Instagram community by May 28, 2025.</p>
+      <div class="deadline-box">
+        <div class="deadline-icon">⏰</div>
+        <div class="deadline-text">
+          <div class="dl">MAY 28, 2025</div>
+          <div class="ds">13-DAY SPRINT START: May 15, 2025</div>
+        </div>
+      </div>
+      <div class="cover-chips">
+        <div class="chip rn">REACT NATIVE</div>
+        <div class="chip ts">TYPESCRIPT</div>
+        <div class="chip ex">EXPO 54</div>
+        <div class="chip new">MODERN ROUTER</div>
+      </div>
+    </div>
+    <div class="cover-bar">
+      <div class="cb-item">
+        <div class="cb-label">SCREENS</div>
+        <div class="cb-value">5</div>
+      </div>
+      <div class="cb-item">
+        <div class="cb-label">DEV DAYS</div>
+        <div class="cb-value">13</div>
+      </div>
+      <div class="cb-item">
+        <div class="cb-label">SHIP FORMAT</div>
+        <div class="cb-value">APK</div>
+      </div>
+      <div class="cb-item">
+        <div class="cb-label">STACK</div>
+        <div class="cb-value">RN + TS</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- SECTION 1: ARCHITECTURE OVERVIEW -->
+  <div class="sec">
+    <div class="sec-mono">What's Changed</div>
+    <h2>SDK 54 + <em>Modern Expo Router</em> (app/ structure)</h2>
+  </div>
+
+  <p>This brief has been updated to use <strong>Expo Router v3+</strong> with the modern <code>app/</code> directory structure (file-based routing), replacing the older <code>src/navigation</code> pattern. This matches Expo's current best practices and your existing project layout.</p>
+
+  <div class="blue-box">
+    <h4>📌 Key Differences from Original Brief</h4>
+    <ul>
+      <li><strong>Routing:</strong> File-based routing via <code>app/</code> directory instead of <code>RootNavigator.tsx</code></li>
+      <li><strong>Navigation:</strong> <code>expo-router</code> handles tabs automatically via <code>app/(tabs)/</code> convention</li>
+      <li><strong>Entry point:</strong> <code>app/_layout.tsx</code> replaces the top-level navigator setup</li>
+      <li><strong>No more manual bottom-tabs navigation:</strong> Layout files define the structure declaratively</li>
+      <li><strong>Easier nested routes:</strong> Create new routes by adding files in the <code>app/</code> directory</li>
+    </ul>
+  </div>
+
+  <hr class="div">
+
+  <!-- SECTION 2: FOLDER STRUCTURE - UPDATED -->
+  <div class="sec">
+    <div class="sec-mono">Project Layout</div>
+    <h2><em>App Router</em> Folder Structure</h2>
+  </div>
+
+  <div class="tree">
+    <div class="tree-dir">📦 lunaflow/</div>
+    
+    <div class="tree-comment">Core app structure with Expo Router</div>
+    <div class="tree-file"><strong>app/</strong></div>
+    <div class="tree-file" style="margin-left: 32px;"><strong>_layout.tsx</strong> — Root layout, theme setup, RootProvider</div>
+    <div class="tree-file" style="margin-left: 32px;"><strong>(tabs)/</strong> — Tab-based layouts folder</div>
+    <div class="tree-file" style="margin-left: 48px;">_layout.tsx — BottomTabNavigator layout (tabs defined here)</div>
+    <div class="tree-file" style="margin-left: 48px;">index.tsx — Home Screen</div>
+    <div class="tree-file" style="margin-left: 48px;">log.tsx — Log Screen</div>
+    <div class="tree-file" style="margin-left: 48px;">calendar.tsx — Calendar Screen</div>
+    <div class="tree-file" style="margin-left: 48px;">insights.tsx — Insights Screen</div>
+    <div class="tree-file" style="margin-left: 48px;">settings.tsx — Settings Screen</div>
+    <div class="tree-file" style="margin-left: 32px;"><strong>day-detail/</strong> — Dynamic route for day sheet</div>
+    <div class="tree-file" style="margin-left: 48px;">[dayString].tsx — Bottom sheet modal</div>
+    
+    <div class="tree-comment">Shared UI components</div>
+    <div class="tree-file"><strong>components/</strong></div>
+    <div class="tree-file" style="margin-left: 32px;"><strong>shared/</strong> — Reusable components</div>
+    <div class="tree-file" style="margin-left: 48px;">Button.tsx, Card.tsx, Badge.tsx, Toggle.tsx, Toast.tsx</div>
+    <div class="tree-file" style="margin-left: 32px;"><strong>screens/</strong> — Screen-specific components</div>
+    <div class="tree-file" style="margin-left: 48px;">home/ — StatusCard, CycleRing, QuickLog, ComingUpCard</div>
+    <div class="tree-file" style="margin-left: 48px;">log/ — PeriodToggle, FlowSelector, SymptomGrid, MoodSelector</div>
+    <div class="tree-file" style="margin-left: 48px;">calendar/ — CalendarGrid, DayCell, MonthHeader, Legend</div>
+    <div class="tree-file" style="margin-left: 48px;">insights/ — StatGrid, PhaseTimeline, SymptomFrequency, PhaseTips</div>
+    <div class="tree-file" style="margin-left: 48px;">settings/ — DatePicker, LengthStepper, ResetButton</div>
+    <div class="tree-file" style="margin-left: 32px;"><strong>modals/</strong> — Overlay / sheet components</div>
+    <div class="tree-file" style="margin-left: 48px;">DayDetailSheet.tsx</div>
+
+    <div class="tree-comment">Core business logic and state</div>
+    <div class="tree-file"><strong>hooks/</strong> — Custom hooks (logic stays here)</div>
+    <div class="tree-file" style="margin-left: 32px;">useStore.ts — Zustand store hook</div>
+    <div class="tree-file" style="margin-left: 32px;">useTheme.ts — Theme context hook</div>
+    <div class="tree-file" style="margin-left: 32px;">useCycleData.ts — Computed cycle data</div>
+    
+    <div class="tree-file"><strong>store/</strong> — Zustand stores with AsyncStorage</div>
+    <div class="tree-file" style="margin-left: 32px;">cycleStore.ts — Cycle settings (lastPeriodDate, length, etc.)</div>
+    <div class="tree-file" style="margin-left: 32px;">logStore.ts — Period logs (date → log entry)</div>
+    
+    <div class="tree-file"><strong>utils/</strong> — Pure functions & helpers</div>
+    <div class="tree-file" style="margin-left: 32px;">cycleCalc.ts — Core logic (getCycleDay, getPhase, getDayType, getNextPeriod)</div>
+    <div class="tree-file" style="margin-left: 32px;">dateHelpers.ts — Date utilities (formatDate, startOfMonth, etc.)</div>
+    <div class="tree-file" style="margin-left: 32px;">constants.ts — App-wide constants (phase colors, cycle phases, etc.)</div>
+
+    <div class="tree-comment">Design system and configuration</div>
+    <div class="tree-file"><strong>theme/</strong> — Theme config (colors, spacing, typography)</div>
+    <div class="tree-file" style="margin-left: 32px;">colors.ts — All color definitions</div>
+    <div class="tree-file" style="margin-left: 32px;">spacing.ts — Spacing scale</div>
+    <div class="tree-file" style="margin-left: 32px;">typography.ts — Font sizes, weights</div>
+    
+    <div class="tree-file"><strong>types/</strong> — TypeScript type definitions</div>
+    <div class="tree-file" style="margin-left: 32px;">cycle.types.ts — Cycle, Phase, Log types</div>
+    <div class="tree-file" style="margin-left: 32px;">log.types.ts — LogEntry, Symptoms, Mood, Flow types</div>
+
+    <div class="tree-comment">Supporting files</div>
+    <div class="tree-file"><strong>assets/</strong> — Images, SVGs, app icons</div>
+    <div class="tree-file"><strong>__tests__/</strong> — Jest tests (optional, but recommended)</div>
+    <div class="tree-file" style="margin-left: 32px;">cycleCalc.test.ts — Unit tests for core logic</div>
+    <div class="tree-file"><strong>app.json</strong> — Expo config</div>
+    <div class="tree-file"><strong>package.json</strong> — Dependencies</div>
+  </div>
+
+  <hr class="div">
+
+  <!-- SECTION 3: KEY FILES - ROUTING -->
+  <div class="sec">
+    <div class="sec-mono">Routing Setup</div>
+    <h2>Expo Router Configuration <em>for Modern app/</em></h2>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-lang">app/_layout.tsx — Root layout</div>
+    <div>
+<span class="c-blue">import</span> <span class="c-green">{ Stack }</span> <span class="c-blue">from</span> <span class="c-green">'expo-router'</span>;
+<span class="c-blue">import</span> <span class="c-green">{ ThemeProvider }</span> <span class="c-blue">from</span> <span class="c-green">'./theme/ThemeContext'</span>;
+
+<span class="c-blue">export</span> <span class="c-blue">default</span> <span class="c-blue">function</span> <span class="c-yellow">RootLayout</span>() {
+  <span class="c-blue">return</span> (
+    &lt;<span class="c-pink">ThemeProvider</span>&gt;
+      &lt;<span class="c-pink">Stack</span> <span class="c-green">screenOptions</span>=<span class="c-green">{{</span> <span class="c-green">headerShown: false }}</span> /&gt;
+    &lt;/<span class="c-pink">ThemeProvider</span>&gt;
+  );
+}
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-lang">app/(tabs)/_layout.tsx — Tabs navigator</div>
+    <div>
+<span class="c-blue">import</span> <span class="c-green">{ Tabs }</span> <span class="c-blue">from</span> <span class="c-green">'expo-router'</span>;
+<span class="c-blue">import</span> <span class="c-green">{ colors }</span> <span class="c-blue">from</span> <span class="c-green">'@/theme/colors'</span>;
+
+<span class="c-blue">export</span> <span class="c-blue">default</span> <span class="c-blue">function</span> <span class="c-yellow">TabsLayout</span>() {
+  <span class="c-blue">return</span> (
+    &lt;<span class="c-pink">Tabs</span>
+      <span class="c-green">screenOptions</span>=<span class="c-green">{{</span>
+        <span class="c-green">tabBarActiveTintColor</span>: colors.primary,
+        <span class="c-green">tabBarInactiveTintColor</span>: colors.muted,
+        <span class="c-green">tabBarStyle</span>: <span class="c-green">{{</span> backgroundColor: colors.surface <span class="c-green">}}</span>,
+        <span class="c-green">headerShown</span>: <span class="c-green">false</span>,
+      <span class="c-green">}}</span>
+    &gt;
+      &lt;<span class="c-pink">Tabs.Screen</span> <span class="c-green">name</span>=<span class="c-green">"index"</span> <span class="c-green">options</span>=<span class="c-green">{{</span> <span class="c-green">title</span>: <span class="c-green">'Home'</span> <span class="c-green">}}</span> /&gt;
+      &lt;<span class="c-pink">Tabs.Screen</span> <span class="c-green">name</span>=<span class="c-green">"log"</span> <span class="c-green">options</span>=<span class="c-green">{{</span> <span class="c-green">title</span>: <span class="c-green">'Log'</span> <span class="c-green">}}</span> /&gt;
+      &lt;<span class="c-pink">Tabs.Screen</span> <span class="c-green">name</span>=<span class="c-green">"calendar"</span> <span class="c-green">options</span>=<span class="c-green">{{</span> <span class="c-green">title</span>: <span class="c-green">'Calendar'</span> <span class="c-green">}}</span> /&gt;
+      &lt;<span class="c-pink">Tabs.Screen</span> <span class="c-green">name</span>=<span class="c-green">"insights"</span> <span class="c-green">options</span>=<span class="c-green">{{</span> <span class="c-green">title</span>: <span class="c-green">'Insights'</span> <span class="c-green">}}</span> /&gt;
+      &lt;<span class="c-pink">Tabs.Screen</span> <span class="c-green">name</span>=<span class="c-green">"settings"</span> <span class="c-green">options</span>=<span class="c-green">{{</span> <span class="c-green">title</span>: <span class="c-green">'Settings'</span> <span class="c-green">}}</span> /&gt;
+    &lt;/<span class="c-pink">Tabs</span>&gt;
+  );
+}
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-lang">app/(tabs)/index.tsx — Home Screen file</div>
+    <div>
+<span class="c-blue">import</span> <span class="c-green">{ View, ScrollView }</span> <span class="c-blue">from</span> <span class="c-green">'react-native'</span>;
+<span class="c-blue">import</span> <span class="c-green">{ StatusCard, CycleRing, ComingUpCard, QuickLog }</span> <span class="c-blue">from</span> <span class="c-green">'@/components/screens/home'</span>;
+
+<span class="c-blue">export</span> <span class="c-blue">default</span> <span class="c-blue">function</span> <span class="c-yellow">HomeScreen</span>() {
+  <span class="c-blue">return</span> (
+    &lt;<span class="c-pink">ScrollView</span> <span class="c-green">style</span>=<span class="c-green">{{</span> <span class="c-green">flex</span>: 1, <span class="c-green">backgroundColor</span>: <span class="c-green">'#0A0B0F'</span> <span class="c-green">}}</span>&gt;
+      &lt;<span class="c-pink">StatusCard</span> /&gt;
+      &lt;<span class="c-pink">CycleRing</span> /&gt;
+      &lt;<span class="c-pink">ComingUpCard</span> /&gt;
+      &lt;<span class="c-pink">QuickLog</span> /&gt;
+    &lt;/<span class="c-pink">ScrollView</span>&gt;
+  );
+}
+    </div>
+  </div>
+
+  <p><strong>Why this structure?</strong> Each `.tsx` file in <code>app/(tabs)/</code> becomes a tab route. No more manual navigation setup. Expo Router handles it.</p>
+
+  <hr class="div">
+
+  <!-- SECTION 4: KEY TYPES -->
+  <div class="sec">
+    <div class="sec-mono">Type Safety</div>
+    <h2>TypeScript <em>Type Definitions</em></h2>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-lang">types/cycle.types.ts</div>
+    <div>
+<span class="c-blue">export type</span> <span class="c-yellow">Phase</span> = <span class="c-green">'menstrual'</span> | <span class="c-green">'follicular'</span> | <span class="c-green">'ovulation'</span> | <span class="c-green">'luteal'</span>;
+
+<span class="c-blue">export type</span> <span class="c-yellow">DayType</span> = 
+  | <span class="c-green">'period'</span> 
+  | <span class="c-green">'fertile'</span> 
+  | <span class="c-green">'ovulation'</span> 
+  | <span class="c-green">'normal'</span>
+  | <span class="c-green">'future'</span>;
+
+<span class="c-blue">export interface</span> <span class="c-yellow">Cycle</span> {
+  lastPeriodDate: <span class="c-blue">string</span>; <span class="c-muted">// YYYY-MM-DD</span>
+  cycleLength: <span class="c-blue">number</span>; <span class="c-muted">// 21–35 days, default 28</span>
+  periodLength: <span class="c-blue">number</span>; <span class="c-muted">// 2–7 days, default 5</span>
+}
+
+<span class="c-blue">export interface</span> <span class="c-yellow">CycleState</span> {
+  cycle: <span class="c-yellow">Cycle</span>;
+  setCycle: (cycle: <span class="c-yellow">Cycle</span>) => <span class="c-blue">void</span>;
+  resetCycle: () => <span class="c-blue">void</span>;
+}
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-lang">types/log.types.ts</div>
+    <div>
+<span class="c-blue">export type</span> <span class="c-yellow">Symptom</span> = 
+  | <span class="c-green">'cramps'</span> | <span class="c-green">'headache'</span> | <span class="c-green">'bloating'</span>
+  | <span class="c-green">'fatigue'</span> | <span class="c-green">'mood-swing'</span> | <span class="c-green">'acne'</span>
+  | <span class="c-green">'back-pain'</span> | <span class="c-green">'appetite-change'</span> | <span class="c-green">'insomnia'</span>;
+
+<span class="c-blue">export type</span> <span class="c-yellow">Mood</span> = <span class="c-green">'😭'</span> | <span class="c-green">'😐'</span> | <span class="c-green">'😊'</span> | <span class="c-green">'😄'</span> | <span class="c-green">'🔥'</span>;
+
+<span class="c-blue">export type</span> <span class="c-yellow">Flow</span> = <span class="c-green">'light'</span> | <span class="c-green">'moderate'</span> | <span class="c-green">'heavy'</span>;
+
+<span class="c-blue">export interface</span> <span class="c-yellow">LogEntry</span> {
+  date: <span class="c-blue">string</span>; <span class="c-muted">// YYYY-MM-DD</span>
+  hasPeriod: <span class="c-blue">boolean</span>;
+  flow?: <span class="c-yellow">Flow</span>; <span class="c-muted">// Only if hasPeriod</span>
+  symptoms: <span class="c-yellow">Symptom</span>[];
+  mood: <span class="c-yellow">Mood</span>;
+  notes: <span class="c-blue">string</span>;
+}
+
+<span class="c-blue">export interface</span> <span class="c-yellow">LogStore</span> {
+  logs: Record&lt;<span class="c-blue">string</span>, <span class="c-yellow">LogEntry</span>&gt;; <span class="c-muted">// date → entry</span>
+  addLog: (entry: <span class="c-yellow">LogEntry</span>) => <span class="c-blue">void</span>;
+  getLog: (date: <span class="c-blue">string</span>) => <span class="c-yellow">LogEntry</span> | <span class="c-blue">undefined</span>;
+  removeLog: (date: <span class="c-blue">string</span>) => <span class="c-blue">void</span>;
+}
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- SECTION 5: STATE MANAGEMENT -->
+  <div class="sec">
+    <div class="sec-mono">Data Layer</div>
+    <h2>Zustand <em>+ AsyncStorage Persistence</em></h2>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-lang">store/cycleStore.ts</div>
+    <div>
+<span class="c-blue">import</span> <span class="c-green">{ create }</span> <span class="c-blue">from</span> <span class="c-green">'zustand'</span>;
+<span class="c-blue">import</span> <span class="c-green">{ persist, createJSONStorage }</span> <span class="c-blue">from</span> <span class="c-green">'zustand/middleware'</span>;
+<span class="c-blue">import</span> <span class="c-green">AsyncStorage</span> <span class="c-blue">from</span> <span class="c-green">'@react-native-async-storage/async-storage'</span>;
+<span class="c-blue">import</span> <span class="c-green">type</span> <span class="c-green">{ CycleState, Cycle }</span> <span class="c-blue">from</span> <span class="c-green">'@/types/cycle.types'</span>;
+
+<span class="c-blue">const</span> <span class="c-yellow">DEFAULT_CYCLE</span>: Cycle = {
+  lastPeriodDate: <span class="c-green">''</span>,
+  cycleLength: 28,
+  periodLength: 5,
+};
+
+<span class="c-blue">export const</span> <span class="c-yellow">useCycleStore</span> = <span class="c-yellow">create</span>&lt;<span class="c-yellow">CycleState</span>&gt;(
+  <span class="c-yellow">persist</span>(
+    (set) => <span class="c-green">({</span>
+      cycle: <span class="c-yellow">DEFAULT_CYCLE</span>,
+      setCycle: (cycle) => <span class="c-yellow">set</span>(<span class="c-green">{ cycle }</span>),
+      resetCycle: () => <span class="c-yellow">set</span>(<span class="c-green">{ cycle: DEFAULT_CYCLE }</span>),
+    <span class="c-green">})</span>,
+    <span class="c-green">{</span>
+      name: <span class="c-green">'lunaflow-cycle'</span>,
+      storage: <span class="c-yellow">createJSONStorage</span>(() => AsyncStorage),
+    <span class="c-green">}</span>
+  )
+);
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-lang">store/logStore.ts</div>
+    <div>
+<span class="c-blue">import</span> <span class="c-green">{ create }</span> <span class="c-blue">from</span> <span class="c-green">'zustand'</span>;
+<span class="c-blue">import</span> <span class="c-green">{ persist, createJSONStorage }</span> <span class="c-blue">from</span> <span class="c-green">'zustand/middleware'</span>;
+<span class="c-blue">import</span> <span class="c-green">AsyncStorage</span> <span class="c-blue">from</span> <span class="c-green">'@react-native-async-storage/async-storage'</span>;
+<span class="c-blue">import</span> <span class="c-green">type</span> <span class="c-green">{ LogStore, LogEntry }</span> <span class="c-blue">from</span> <span class="c-green">'@/types/log.types'</span>;
+
+<span class="c-blue">export const</span> <span class="c-yellow">useLogStore</span> = <span class="c-yellow">create</span>&lt;<span class="c-yellow">LogStore</span>&gt;(
+  <span class="c-yellow">persist</span>(
+    (set, get) => <span class="c-green">({</span>
+      logs: <span class="c-green">{}</span>,
+      addLog: (entry: LogEntry) =>
+        <span class="c-yellow">set</span>((state) => <span class="c-green">({</span>
+          logs: <span class="c-green">{ ...state.logs, [entry.date]: entry }</span>,
+        <span class="c-green">}))</span>,
+      getLog: (date: <span class="c-blue">string</span>) => <span class="c-yellow">get</span>().<span class="c-yellow">logs</span>[date],
+      removeLog: (date: <span class="c-blue">string</span>) =>
+        <span class="c-yellow">set</span>((state) => <span class="c-green">{{</span>
+          logs: Object.<span class="c-yellow">fromEntries</span>(
+            Object.<span class="c-yellow">entries</span>(state.logs).<span class="c-yellow">filter</span>(([k]) => k !== date)
+          ),
+        <span class="c-green">}})</span>,
+    <span class="c-green">})</span>,
+    <span class="c-green">{</span>
+      name: <span class="c-green">'lunaflow-logs'</span>,
+      storage: <span class="c-yellow">createJSONStorage</span>(() => AsyncStorage),
+    <span class="c-green">}</span>
+  )
+);
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- SECTION 6: CORE CYCLE LOGIC -->
+  <div class="sec">
+    <div class="sec-mono">Business Logic</div>
+    <h2>Cycle Calculation <em>Engine (cycleCalc.ts)</em></h2>
+  </div>
+
+  <p>This file contains the **heart** of the app. All cycle phase logic, day calculations, and predictions happen here. Must be unit tested.</p>
+
+  <div class="code-block">
+    <div class="cb-lang">utils/cycleCalc.ts — Core exports</div>
+    <div>
+<span class="c-blue">import</span> <span class="c-green">type</span> <span class="c-green">{ DayType, Phase }</span> <span class="c-blue">from</span> <span class="c-green">'@/types/cycle.types'</span>;
+
+<span class="c-muted">// getCycleDay(date: string, lastPeriodDate: string): number</span>
+<span class="c-muted">// Returns 1–28 (or longer). Which day of current cycle is this?</span>
+
+<span class="c-muted">// getPhase(cycleDay: number): Phase</span>
+<span class="c-muted">// Returns phase based on day: menstrual (1–5), follicular (6–13), ovulation (14–15), luteal (16–28)</span>
+
+<span class="c-muted">// getDayType(cycleDay: number, hasPeriod: boolean): DayType</span>
+<span class="c-muted">// Returns color type: 'period' | 'fertile' | 'ovulation' | 'normal' | 'future'</span>
+
+<span class="c-muted">// getNextPeriod(cycleDay: number, cycleLength: number): number</span>
+<span class="c-muted">// Days until next period starts</span>
+
+<span class="c-muted">// getPhaseProgress(cycleDay: number, phase: Phase): { current: number; total: number }</span>
+<span class="c-muted">// How far through the current phase? Used for phase timeline progress bar</span>
+    </div>
+  </div>
+
+  <div class="warn-box">
+    <h4>⚠️ Test cycleCalc Thoroughly</h4>
+    <ul>
+      <li>Test edge cases: cycle day 1, last day of cycle, ovulation window (day 12–16)</li>
+      <li>Test with different cycle lengths (21–35 days)</li>
+      <li>Test when lastPeriodDate is in the future (should return 0 or handle gracefully)</li>
+      <li>Test with period logged but app thinks it's past period days (sync logic)</li>
+    </ul>
+  </div>
+
+  <hr class="div">
+
+  <!-- SECTION 7: PACKAGE.JSON -->
+  <div class="sec">
+    <div class="sec-mono">Dependencies</div>
+    <h2>package.json — <em>SDK 54 Full List</em></h2>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-lang">package.json</div>
+    <div>
+{
+  <span class="c-green">"name"</span>: <span class="c-green">"lunaflow"</span>,
+  <span class="c-green">"version"</span>: <span class="c-green">"1.0.0"</span>,
+  <span class="c-green">"main"</span>: <span class="c-green">"expo-router/entry"</span>,
+  <span class="c-green">"scripts"</span>: {
+    <span class="c-green">"start"</span>: <span class="c-green">"expo start"</span>,
+    <span class="c-green">"android"</span>: <span class="c-green">"expo start --android"</span>,
+    <span class="c-green">"ios"</span>: <span class="c-green">"expo start --ios"</span>,
+    <span class="c-green">"test"</span>: <span class="c-green">"jest"</span>,
+    <span class="c-green">"build:android"</span>: <span class="c-green">"eas build --platform android --profile preview"</span>,
+    <span class="c-green">"build:ios"</span>: <span class="c-green">"eas build --platform ios --profile preview"</span>
+  },
+  <span class="c-green">"dependencies"</span>: {
+    <span class="c-muted">// Core (SDK 54)</span>
+    <span class="c-green">"expo"</span>: <span class="c-green">"~54.0.0"</span>,
+    <span class="c-green">"react"</span>: <span class="c-green">"18.2.0"</span>,
+    <span class="c-green">"react-native"</span>: <span class="c-green">"0.76.0"</span>,
+
+    <span class="c-muted">// Modern Routing (app router pattern)</span>
+    <span class="c-green">"expo-router"</span>: <span class="c-green">"~3.5.0"</span>,
+    <span class="c-green">"react-native-screens"</span>: <span class="c-green">"~4.1.0"</span>,
+    <span class="c-green">"react-native-safe-area-context"</span>: <span class="c-green">"4.12.0"</span>,
+
+    <span class="c-muted">// State + Storage</span>
+    <span class="c-green">"zustand"</span>: <span class="c-green">"^4.5.2"</span>,
+    <span class="c-green">"@react-native-async-storage/async-storage"</span>: <span class="c-green">"1.24.0"</span>,
+
+    <span class="c-muted">// Date utilities</span>
+    <span class="c-green">"dayjs"</span>: <span class="c-green">"^1.11.13"</span>,
+
+    <span class="c-muted">// UI utilities</span>
+    <span class="c-green">"react-native-svg"</span>: <span class="c-green">"15.2.0"</span>,
+    <span class="c-green">"expo-haptics"</span>: <span class="c-green">"~14.0.0"</span>,
+    <span class="c-green">"expo-linear-gradient"</span>: <span class="c-green">"~14.0.0"</span>,
+    <span class="c-green">"@expo/vector-icons"</span>: <span class="c-green">"^14.0.2"</span>
+  },
+  <span class="c-green">"devDependencies"</span>: {
+    <span class="c-green">"typescript"</span>: <span class="c-green">"^5.4.0"</span>,
+    <span class="c-green">"@types/react"</span>: <span class="c-green">"~18.2.79"</span>,
+    <span class="c-green">"@types/react-native"</span>: <span class="c-green">"^0.76.0"</span>,
+    <span class="c-green">"jest"</span>: <span class="c-green">"^29.7.0"</span>,
+    <span class="c-green">"@testing-library/react-native"</span>: <span class="c-green">"^12.4.0"</span>
+  }
+}
+    </div>
+  </div>
+
+  <div class="blue-box">
+    <h4>📌 What's Changed from Original</h4>
+    <ul>
+      <li><strong>expo:</strong> Updated to ~54.0.0 (from ~51.0.0)</li>
+      <li><strong>react-native:</strong> Updated to 0.76.0 (from 0.74.1)</li>
+      <li><strong>expo-router:</strong> Now required (not in original brief) — ~3.5.0 for modern routing</li>
+      <li><strong>Removed @react-navigation:</strong> No longer needed with Expo Router's tab management</li>
+      <li><strong>Added Jest + @testing-library:</strong> For unit testing cycleCalc.ts</li>
+    </ul>
+  </div>
+
+  <hr class="div">
+
+  <!-- SECTION 8: TIMELINE - UPDATED -->
+  <div class="sec">
+    <div class="sec-mono">Build Timeline</div>
+    <h2>13-Day <em>Sprint Plan — Updated for Expo Router</em></h2>
+  </div>
+
+  <div class="warn-box">
+    <h4>⚠️ PM Note to Developer</h4>
+    <ul>
+      <li>Scope is LOCKED. Do not add features not in this brief without PM approval.</li>
+      <li>If a screen takes longer than planned — cut polish, not functionality.</li>
+      <li>Test on a real Android device from Day 3. Simulator behaviour differs.</li>
+      <li>Expo Router file-based routing means no manual navigation wiring — define screens by adding files to <code>app/</code>.</li>
+      <li>All dates below assume start date of May 15. Deadline is May 28.</li>
+    </ul>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-row header">
+      <div class="tl-cell">Date</div>
+      <div class="tl-cell">Who</div>
+      <div class="tl-cell">Task</div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-cell"><div class="tl-date">May 15</div></div>
+      <div class="tl-cell"><div class="tl-who">Dev</div></div>
+      <div class="tl-cell"><div class="tl-task">Repo init — <code>npx create-expo-app lunaflow --template typescript</code>. Set up folder structure exactly per this brief. Install all dependencies. Set up <code>app/</code> directory with <code>_layout.tsx</code> and <code>(tabs)/_layout.tsx</code>. Verify Expo Go works on device. Verify routing works (can navigate between tabs).</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-cell"><div class="tl-date">May 16</div></div>
+      <div class="tl-cell"><div class="tl-who">Dev</div></div>
+      <div class="tl-cell"><div class="tl-task">Theme setup — colors.ts, typography.ts, spacing.ts. TypeScript types — cycle.types.ts, log.types.ts. Constants file. Create RootProvider wrapper with theme context. Zustand stores (cycleStore.ts, logStore.ts) with AsyncStorage persist. Verify persistence works by storing a value and reloading app.</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-cell"><div class="tl-date">May 17</div></div>
+      <div class="tl-cell"><div class="tl-who">Dev</div></div>
+      <div class="tl-cell"><div class="tl-task">Core logic — cycleCalc.ts: getCycleDay, getPhase, getDayType, getNextPeriod, getPhaseProgress. dateHelpers.ts. <strong>Write Jest unit tests for all cycle calculations.</strong> Test at least 15 test cases (edge cases: cycle day 1, ovulation, future dates, etc.). These functions are the heart of the app.</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-cell"><div class="tl-date">May 18</div></div>
+      <div class="tl-cell"><div class="tl-who">Dev</div></div>
+      <div class="tl-cell"><div class="tl-task">All 5 screen components as files in <code>app/(tabs)/</code>: index.tsx (Home), log.tsx, calendar.tsx, insights.tsx, settings.tsx. All as placeholder View components. Tabs navigation working end-to-end. Create shared components folder: Button, Card, Badge, Toggle, Toast. Placeholder only.</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-cell"><div class="tl-date">May 19</div></div>
+      <div class="tl-cell"><div class="tl-who">Dev</div></div>
+      <div class="tl-cell"><div class="tl-task">SettingsScreen — complete. DateTimePicker or custom date selector for lastPeriodDate. Steppers for cycle and period length. Reset button. Save to cycleStore. This screen first because all other screens depend on cycle settings. Test: set a lastPeriodDate, verify it persists on reload.</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-cell"><div class="tl-date">May 20</div></div>
+      <div class="tl-cell"><div class="tl-who">Dev</div></div>
+      <div class="tl-cell"><div class="tl-task">LogScreen — complete. PeriodToggle (conditional flow selector), FlowSelector (light/moderate/heavy), SymptomGrid (9 buttons), MoodSelector (5 emoji), NotesInput, Save button. Pre-fill from existing logs if date has one. Auto-save working. Test: log symptoms, reload, verify log persists.</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-cell"><div class="tl-date">May 21</div></div>
+      <div class="tl-cell"><div class="tl-who">Dev + Gokul</div></div>
+      <div class="tl-cell"><div class="tl-task">Gokul tests Settings + Log screens on real device. Developer fixes bugs from feedback. No new features — bug fixes only. Test edge cases: first-time user (no lastPeriodDate set), no logs, future dates in log. Fix crashes or UI misalignments.</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-cell"><div class="tl-date">May 22</div></div>
+      <div class="tl-cell"><div class="tl-who">Dev</div></div>
+      <div class="tl-cell"><div class="tl-task">CalendarScreen — CalendarGrid showing full month, DayCell with all day types coloured, MonthHeader with prev/next buttons, Legend row showing phase colors. getDayType called for each visible day. Use useMemo to prevent re-renders on scroll. Performance test: calendar should load instantly.</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-cell"><div class="tl-date">May 23</div></div>
+      <div class="tl-cell"><div class="tl-who">Dev</div></div>
+      <div class="tl-cell"><div class="tl-task">DayDetailSheet — tap any day to see log data in a bottom sheet modal (use Expo Router dynamic route <code>[dayString].tsx</code>). Link to LogScreen for editing. HomeScreen — StatusCard showing current phase, CycleRing SVG progress, ComingUpCard (next period in X days), QuickLog strip. All wired to live Zustand data.</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-cell"><div class="tl-date">May 24</div></div>
+      <div class="tl-cell"><div class="tl-who">Dev</div></div>
+      <div class="tl-cell"><div class="tl-task">InsightsScreen — StatGrid (avg cycle, period length, etc.), PhaseTimeline (which days are which phase), SymptomFrequency bars (which symptoms logged most), PhaseTips (advice for current phase), medical disclaimer. Empty states for all sections. End-to-end data flow test: log 3 days of data → calendar highlights them → insights shows stats → home updates.</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-cell"><div class="tl-date">May 25</div></div>
+      <div class="tl-cell"><div class="tl-who">Dev + Gokul</div></div>
+      <div class="tl-cell"><div class="tl-task">Full app review. Gokul tests all 5 screens on real device. Bug list created. Developer fixes priority bugs. UI polish pass — spacing, colors match brand exactly (use theme/colors.ts), typography consistent, no warnings in console.</div></div>
+    </div>
+    <div class="tl-row">
+      <div class="tl-cell"><div class="tl-date">May 26–27</div></div>
+      <div class="tl-cell"><div class="tl-who">Dev</div></div>
+      <div class="tl-cell"><div class="tl-task">Bug fixes, edge case handling, performance check. Add app icon and splash screen (use app.json and assets/). EAS Build setup — configure eas.json for Android preview builds. Generate preview APK for Android. Test APK on 2 different Android devices for crashes, UI, performance.</div></div>
+    </div>
+    <div class="tl-row milestone">
+      <div class="tl-cell"><div class="tl-date">May 28 🚀</div></div>
+      <div class="tl-cell"><div class="tl-who">Both</div></div>
+      <div class="tl-cell"><div class="tl-task"><strong>MVP LAUNCH</strong> — Share APK with LunaFlow Instagram community. Post: "LunaFlow Period Tracker is live. Free. Private. No login. Just for you. 🌙" Collect feedback for v1.1.</div></div>
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <!-- POST MVP -->
+  <div class="sec">
+    <div class="sec-mono">Post-MVP Roadmap</div>
+    <h2>What Comes <em>After May 28</em></h2>
+  </div>
+
+  <div class="api-table-wrap">
+    <table class="api-table">
+      <tr>
+        <th>Feature</th>
+        <th>Version</th>
+        <th>Why It Waits</th>
+      </tr>
+      <tr>
+        <td>Push notifications for period reminders</td>
+        <td>v1.1</td>
+        <td>Expo Notifications setup + Firebase config takes 2 extra days. Not critical for MVP.</td>
+      </tr>
+      <tr>
+        <td>Cycle length auto-calculation from logs</td>
+        <td>v1.1</td>
+        <td>Need minimum 3 logged cycles. MVP users won't have enough data yet.</td>
+      </tr>
+      <tr>
+        <td>Multiple language support (Malayalam)</td>
+        <td>v1.2</td>
+        <td>i18n setup + translation of all strings. 3–4 days work.</td>
+      </tr>
+      <tr>
+        <td>Pad drive locator / LunaFlow map</td>
+        <td>v2.0</td>
+        <td>Requires backend + Google Maps API. Post-MVP backend work.</td>
+      </tr>
+      <tr>
+        <td>Community stories feed</td>
+        <td>v2.0</td>
+        <td>Requires backend, moderation, user accounts. Major feature.</td>
+      </tr>
+      <tr>
+        <td>Doctor finder / telehealth</td>
+        <td>v3.0</td>
+        <td>Partnerships, medical compliance, significant development.</td>
+      </tr>
+      <tr>
+        <td>iCloud / Google Drive backup</td>
+        <td>v1.2</td>
+        <td>expo-file-system export. Good for user retention. 1 day work.</td>
+      </tr>
+      <tr>
+        <td>Dark mode</td>
+        <td>v1.1</td>
+        <td>useColorScheme hook + dark color set. 1 day work. Nice-to-have.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="green-box" style="margin-top:32px;">
+    <h4>✓ Final Note to Developer</h4>
+    <p>The scope is exactly what is in this document. Nothing more. Build clean, typed, well-structured code because this app will grow. The folder structure is designed for scale. With Expo Router, adding new screens is as simple as creating new files in <code>app/</code>. Test cycleCalc thoroughly — it's the engine. If anything is unclear, ask Gokul. We ship on May 28. Let's go.</p>
+  </div>
+
+</div>
+
+<footer>
+  <div>LunaFlow · MVP Technical Brief · v2.0 (SDK 54 + Modern Expo Router) · Confidential</div>
+  <div>Target: May 28, 2025 · @lunaflow.in</div>
+</footer>
+
+</body>
+</html>
