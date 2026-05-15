@@ -15,9 +15,9 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#FFF7FA",
-        "foregroundImage": "./assets/images/banner.png",
-        "backgroundImage": "./assets/images/banner.png",
-        "monochromeImage": "./assets/images/banner.png"
+        "foregroundImage": "./assets/images/lunaflow_adaptive_foreground.png",
+        "backgroundImage": "./assets/images/lunaflow_core_app_icon.png",
+        "monochromeImage": "./assets/images/lunaflow_monochrome_icon.png"
       },
       "package": "com.blitzbugg.lunaflow"
     },
