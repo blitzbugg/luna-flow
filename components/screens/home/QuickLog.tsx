@@ -5,6 +5,7 @@ import { spacing } from '@/theme/spacing';
 import { Card } from '@/components/shared/Card';
 import { Plus, Edit3 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import dayjs from 'dayjs';
 
 interface QuickLogProps {
   hasLogToday: boolean;
@@ -14,7 +15,12 @@ export const QuickLog = ({ hasLogToday }: QuickLogProps) => {
   const router = useRouter();
 
   return (
-    <TouchableOpacity onPress={() => router.push('/(tabs)/log')}>
+    <TouchableOpacity 
+      onPress={() => router.push({ 
+        pathname: '/(tabs)/log', 
+        params: { date: dayjs().format('YYYY-MM-DD') } 
+      })}
+    >
       <Card style={[styles.card, hasLogToday && styles.hasLogCard]}>
         <View style={styles.content}>
           <View style={[styles.iconBox, { backgroundColor: hasLogToday ? 'rgba(112, 144, 248, 0.1)' : 'rgba(232, 96, 122, 0.1)' }]}>

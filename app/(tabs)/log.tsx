@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   Alert
 } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { colors } from '@/theme/colors';
 import { spacing } from '@/theme/spacing';
 import { typography } from '@/theme/typography';
@@ -27,9 +27,16 @@ import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-reac
 import dayjs from 'dayjs';
 
 export default function LogScreen() {
+  const router = useRouter();
   const { date: paramDate } = useLocalSearchParams<{ date: string }>();
   const [date, setDate] = useState(paramDate || dayjs().format('YYYY-MM-DD'));
   const { logs, addLog, getLog } = useLogStore();
+
+  useEffect(() => {
+    if (paramDate) {
+      setDate(paramDate);
+    }
+  }, [paramDate]);
   
   const [hasPeriod, setHasPeriod] = useState(false);
   const [flow, setFlow] = useState<any>('');
@@ -77,7 +84,9 @@ export default function LogScreen() {
   const changeDate = (days: number) => {
     const newDate = dayjs(date).add(days, 'day');
     if (newDate.isAfter(dayjs(), 'day')) return;
-    setDate(newDate.format('YYYY-MM-DD'));
+    const formatted = newDate.format('YYYY-MM-DD');
+    setDate(formatted);
+    router.setParams({ date: formatted });
   };
 
   return (
